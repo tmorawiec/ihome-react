@@ -10,12 +10,17 @@
         "start": "webpack-dev-server --open"
     },
     "dependencies": {
+        "css-loader": "^3.0.0",
         "formik": "^1.5.2",
         "history": "^4.9.0",
+        "nw-react-slider": "^2.0.1",
         "react": "^16.8.6",
         "react-dom": "^16.8.6",
         "react-router-dom": "^5.0.0",
+        "reactrangeslider": "^3.0.6",
         "rxjs": "^6.3.3",
+        "socket.io-client": "^2.2.0",
+        "style-loader": "^0.23.1",
         "yup": "^0.27.0"
     },
     "devDependencies": {
