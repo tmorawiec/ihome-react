@@ -4,13 +4,14 @@ import { userService, authenticationService } from '@/_services';
 import io from "socket.io-client";
 
 import Flat from "./flat";
+import Suwak from "./suwak";
 
 
 
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
-
+        this.handleCelsiusChange = this.handleCelsiusChange.bind(this);
         
 
         this.state = {
@@ -30,7 +31,11 @@ class HomePage extends React.Component {
               bathroom: 0,
               balcony: 0,
             },
-            testowy: 0
+            testowy: 0,
+
+            temperature: {},
+
+
             
 
         };
@@ -40,7 +45,7 @@ class HomePage extends React.Component {
         
      
         this.socket = io.connect('http://localhost:3030', {
-            query: {token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoidXNlcjEyMyIsInBhc3N3b3JkIjoiMTIzNCIsImZpcnN0TmFtZSI6IkpvbiIsImxhc3ROYW1lIjoiRG9lIiwiZG9iIjoiMTIvMTEvMTk5MSIsImVtYWlsIjoidXNlckBnbWFpbC5jb20iLCJhZGRyZXNzIjp7InN0cmVldCI6IjU1NSBCYXlzaG9yZSBCbHZkIiwiY2l0eSI6IlRhbXBhIiwic3RhdGUiOiJGbG9yaWRhIiwiemlwIjoiMzM4MTMifX0sImlhdCI6MTU2MTExODU3MSwiZXhwIjoxNTYxMTIyMTcxfQ.tRp1ROAq0qH-8dHofd3t4xUSX_dAgWFNzUT4POkwP7Y'}
+            query: {token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoidXNlcjEyMyIsInBhc3N3b3JkIjoiMTIzNCIsImlkIjoxLCJlbWFpbCI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJhZG1pbiI6dHJ1ZSwicGVybWlzc2lvbl9wb2xpY3kiOnsibmFtZSI6InR5bGtvIHBvZGdsxIVkIiwibWFpbiByb29tIjpmYWxzZSwiYmVkcm9vbSI6ZmFsc2UsImtpdGNoZW4iOmZhbHNlLCJiYXRocm9vbSI6dHJ1ZX19LCJpYXQiOjE1NjE5OTI3ODEsImV4cCI6MTU2MTk5NjM4MX0.Wu50UshnCjkn3teaQpu8jZ4axFI5hkO35sHTIFeAWBs'}
           });
         this.sendMessage = ev => {
             ev.preventDefault();
@@ -58,6 +63,12 @@ class HomePage extends React.Component {
         // przyjmuje dane od serwera node (dane wysłane od innego klienta, swoje nie wracają)
         this.socket.on("dane_zmiana_suwaka", data => this.setState({ value: data }));
 
+ 
+        // update stanu spowodowany odebraniem sygnału z socket.io
+        this.socket.on("update-switch", data => this.handleCelsiusChange(data[0])(data[1]));
+    
+
+         
 
 
         
@@ -69,13 +80,33 @@ class HomePage extends React.Component {
         console.log(event.target.value);
         this.socket.emit('suwak', event.target.value);
       }
+
+      handleChange3(event) {
+        this.setState({value: event.target.value});
+        console.log(event.target.value);
+        this.socket.emit('slider', event.target.value);
+      }
     handleChange2(event) {
         this.setState({testowy: event.target.value});
 
      
       }
 
+      // handleCelsiusChange(temperature) {
+      //   this.setState({temperature});
+      // }
 
+
+      handleCelsiusChange = name => value => {
+        const { temperature } = this.state;
+        console.log("updating value", name, value);
+        this.setState({
+          temperature: {
+            ...temperature,
+            [name]: value
+          }
+        });
+      };
 
     
 
@@ -110,19 +141,25 @@ class HomePage extends React.Component {
                     step="1"
                     />
                 </p>
+
+                <Suwak
+                  value={this.state.temperature["second"]}
+                  onSwitchChange={this.handleCelsiusChange("second")}
+                />
                 <p>
-                    <output>{this.state.testowy}</output>
-                    <input 
-                    id="typeinp" 
-                    type="range" 
-                    min="0" max="255" 
-                    defaultValue={this.state.testowy} 
-                    value={this.state.testowy}
-                    onChange={this.handleChange2}
-                    step="1"
-                    />
-                </p>
+                  Dane na zewnątrz komponentu{" "}
+                  <output>{this.state.temperature.second}</output>
                 
+                </p>
+
+                <Suwak
+                  value={this.state.temperature["bathroom"]}
+                  onSwitchChange={this.handleCelsiusChange("bathroom")}
+                  name={"bathroom"}
+                  socket={this.socket}
+                />
+                <p>Dane na zewnątrz komponentu{" "} <output>{this.state.temperature.bathroom}</output></p>
+              
 
                 
 
@@ -152,9 +189,11 @@ class HomePage extends React.Component {
                         hall="gray" 
                         bedroom="gray"
                         kitchen={this.state.value}
-                        bathroom="gray"
+                        bathroom={`rgba( 255, 165, 0, ${this.state.temperature.bathroom/255} )`}
                         balcony="gray"
                     />
+
+
         
 
             </div>
