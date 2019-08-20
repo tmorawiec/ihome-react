@@ -7,6 +7,8 @@ import { PrivateRoute } from '@/_components';
 import { HomePage } from '@/HomePage';
 import { LoginPage } from '@/LoginPage';
 
+import './App.css';
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -38,7 +40,7 @@ class App extends React.Component {
                             </div>
                         </nav>
                     }
-                    <div className="jumbotron">
+                    <div className="jumbotron colors">
                         <div className="container">
                             <div className="row">
                                 <div className="col-md-12 offset-md-12">

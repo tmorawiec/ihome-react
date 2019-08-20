@@ -8,6 +8,8 @@ import Suwak from "./suwak";
 
 
 
+
+
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
@@ -33,7 +35,13 @@ class HomePage extends React.Component {
             },
             testowy: 0,
 
-            temperature: {},
+            temperature: {
+              room: 0,
+              hall: 0,
+              bedroom: 0,
+              kitchen: 0,
+              bathroom: 0
+            },
 
 
             
@@ -45,7 +53,7 @@ class HomePage extends React.Component {
         
      
         this.socket = io.connect('http://localhost:3030', {
-            query: {token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7InVzZXJuYW1lIjoidXNlcjEyMyIsInBhc3N3b3JkIjoiMTIzNCIsImlkIjoxLCJlbWFpbCI6ImV4YW1wbGVAZXhhbXBsZS5jb20iLCJhZG1pbiI6dHJ1ZSwicGVybWlzc2lvbl9wb2xpY3kiOnsibmFtZSI6InR5bGtvIHBvZGdsxIVkIiwibWFpbiByb29tIjpmYWxzZSwiYmVkcm9vbSI6ZmFsc2UsImtpdGNoZW4iOmZhbHNlLCJiYXRocm9vbSI6dHJ1ZX19LCJpYXQiOjE1NjE5OTI3ODEsImV4cCI6MTU2MTk5NjM4MX0.Wu50UshnCjkn3teaQpu8jZ4axFI5hkO35sHTIFeAWBs'}
+            query: {token: authenticationService.currentUserValue.token}
           });
         this.sendMessage = ev => {
             ev.preventDefault();
@@ -55,7 +63,7 @@ class HomePage extends React.Component {
     }
 
     componentDidMount() {
-        userService.getAll().then(users => this.setState({ users }));
+        // userService.getAll().then(users => this.setState({ users }));
         
 
         this.socket.on("FromAPI", data => this.setState({ response: data }));
@@ -129,28 +137,6 @@ class HomePage extends React.Component {
                     </ul>
                 }
 
-                <p>
-                    <output>{this.state.value}</output>
-                    <input 
-                    id="typeinp" 
-                    type="range" 
-                    min="0" max="255" 
-                    defaultValue={this.state.value} 
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    step="1"
-                    />
-                </p>
-
-                <Suwak
-                  value={this.state.temperature["second"]}
-                  onSwitchChange={this.handleCelsiusChange("second")}
-                />
-                <p>
-                  Dane na zewnątrz komponentu{" "}
-                  <output>{this.state.temperature.second}</output>
-                
-                </p>
 
                 <Suwak
                   value={this.state.temperature["bathroom"]}
@@ -159,8 +145,37 @@ class HomePage extends React.Component {
                   socket={this.socket}
                 />
                 <p>Dane na zewnątrz komponentu{" "} <output>{this.state.temperature.bathroom}</output></p>
-              
 
+                <Suwak
+                  value={this.state.temperature["bedroom"]}
+                  onSwitchChange={this.handleCelsiusChange("bedroom")}
+                  name={"bedroom"}
+                  socket={this.socket}
+                />
+
+                <Suwak
+                  value={this.state.temperature["hall"]}
+                  onSwitchChange={this.handleCelsiusChange("hall")}
+                  name={"hall"}
+                  socket={this.socket}
+                />
+
+<Suwak
+                  value={this.state.temperature["kitchen"]}
+                  onSwitchChange={this.handleCelsiusChange("kitchen")}
+                  name={"kitchen"}
+                  socket={this.socket}
+                />
+
+<Suwak
+                  value={this.state.temperature["room"]}
+                  onSwitchChange={this.handleCelsiusChange("room")}
+                  name={"room"}
+                  socket={this.socket}
+                />
+
+              
+          
                 
 
         <div>
@@ -185,12 +200,14 @@ class HomePage extends React.Component {
         </label>
                 
                 <Flat 
-                        room={`rgba( 255, 165, 0, ${this.state.value/255} )`}
-                        hall="gray" 
-                        bedroom="gray"
-                        kitchen={this.state.value}
-                        bathroom={`rgba( 255, 165, 0, ${this.state.temperature.bathroom/255} )`}
+                        room={`rgba( 255, 255, 255, ${this.state.temperature.room/255} )`} 
+                        hall={`rgba( 255, 255, 255, ${this.state.temperature.hall/255} )`} 
+                        bedroom={`rgba( 255, 255, 255, ${this.state.temperature.bedroom/255} )`}
+                        kitchen={`rgba( 255, 255, 255, ${this.state.temperature.kitchen/255} )`} 
+                        bathroom={`rgba( 255, 255, 255, ${this.state.temperature.bathroom/255} )`}
                         balcony="gray"
+
+                        displayText={true}
                     />
 
 
