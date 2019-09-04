@@ -21,31 +21,52 @@ class Suwak extends React.Component {
     const { value, initialValue } = this.props;
 
     return (
-      <div>
-        <input
-        class="slider"
-          type="range"
-          min="0"
-          max="255"
-          // defaultValue={initialValue}
-          value={value}
-          onChange={this.handleChange}
-          step="1"
-        />
 
-        <output>Suwak: {this.props.name + this.precent(value)}</output>
+
+
+
+      <div>
+
+
+      <div class="row">
+        <div class="col-sm-2">
+         {!this.props.permission && <span class="badge badge-warning">Brak dostępu</span>}
+         <span class="badge badge-dark">{this.props.name}</span>
+         <span class="badge badge-secondary">{this.precent(value)}</span>
+
+
+          
+        </div>
+        <div class="col-sm-10">
+          <input
+            class="slider"
+            type="range"
+            min="0"
+            max="255"
+            disabled={!this.props.permission}
+            value={value}
+            onChange={this.handleChange}
+            step="1"
+          />
+        </div>
+      </div>
+
+
+
+
+
+
       </div>
     );
   }
 
+  // 255 is 100%
   precent = (val) => `${((val/255)*100).toFixed()}%`
 
   handleChange(e) {
     this.props.onSwitchChange(e.target.value);
-
     this.props.socket.emit('switch', [this.props.name, e.target.value]);
-    console.log(e.target.value)
-    // console.log(filter="url(#blur)")
+    console.log(`Sending data: ${[this.props.name, e.target.value]}`)
   }
 }
 export default Suwak;

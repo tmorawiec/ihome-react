@@ -34,14 +34,15 @@
   }
 
 
-  .slider-disabled::-webkit-slider-thumb {
+  :disabled::-webkit-slider-thumb {
     opacity: 10;
     cursor: not-allowed;
     background: rgb(200, 200, 200);
   }
 
-  .slider-disabled::-moz-range-thumb {
+  :disabled::-moz-range-thumb {
     opacity: 10;
     cursor: not-allowed;
     background: rgb(200, 200, 200);
   }
+
